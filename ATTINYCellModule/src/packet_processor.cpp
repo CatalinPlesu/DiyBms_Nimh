@@ -25,6 +25,9 @@ https://creativecommons.org/licenses/by-nc-sa/2.0/uk/
 */
 
 #include "packet_processor.h"
+#if defined(ByteLinkEnable)
+  #include "byte_link.h"
+#endif
 //#include "nimh_bms.h"
 
 // Enable this for debug/testing a single module will pretend to be an entire bank of 16 modules
@@ -485,6 +488,38 @@ bool PacketProcessor::processPacket(PacketStruct *buffer)
     bat_my_lib.error_clear();
     return true;
   }
+#endif
+
+#if defined(ByteLinkEnable)
+  case COMMAND::ByteLinkCount:
+  {
+    buffer->moduledata[moduledata_index] = byte_link_get_variable_count();
+    return true;
+  }
+
+  case COMMAND::ByteLinkGetOne:
+  {
+    byte_link_get_one();
+    return true;
+  }  
+
+  case COMMAND::ByteLinkGetMessage:
+  {
+    byte_link_read_message();
+    return true;
+  }
+
+  case COMMAND::ByteLinkRead:
+  {
+    byte_link_read_variable();
+    return true;
+  }    
+
+  case COMMAND::ByteLinkWrite:
+  {
+    byte_link_write_variable();
+    return true;
+  }   
 #endif
 
   }

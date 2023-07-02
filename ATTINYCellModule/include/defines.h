@@ -62,6 +62,14 @@ enum COMMAND: uint8_t
     GetParameters=18,
     ClearError=19,
 #endif
+
+#if defined(ByteLinkEnable)
+    ByteLinkCount,
+    ByteLinkGetOne,
+    ByteLinkGetMessage,
+    ByteLinkRead,
+    ByteLinkWrite,
+#endif
 };
 
 //Default values
