@@ -978,7 +978,6 @@ void DIYBMSServer::esp_variables(AsyncWebServerRequest *request) {
   TS_SharedData* array;// = byte_link_get_variable_array();
   byte_link_get_variable_array(&array);
 
-
   StaticJsonDocument<1024> jsonDoc;
 
   JsonArray variablesArray = jsonDoc.createNestedArray("variables");
