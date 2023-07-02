@@ -41,6 +41,7 @@ https://creativecommons.org/licenses/by-nc-sa/2.0/uk/
 #include "settings.h"
 
 #include "nimh_bms.h"
+#include "byte_link.h"
 
 AsyncWebServer *DIYBMSServer::_myserver;
 String DIYBMSServer::UUIDString;
@@ -970,6 +971,35 @@ void DIYBMSServer::PrintStreamComma(AsyncResponseStream *response, const __Flash
   response->print(',');
 }
 
+#if defined(ByteLinkEnable)
+
+void DIYBMSServer::esp_variables(AsyncWebServerRequest *request) {
+  uint16_t variableCount = byte_link_get_variable_count();
+  TS_SharedData* array;// = byte_link_get_variable_array();
+  byte_link_get_variable_array(&array);
+
+
+  StaticJsonDocument<1024> jsonDoc;
+
+  JsonArray variablesArray = jsonDoc.createNestedArray("variables");
+
+  for (uint16_t i = 0; i < variableCount; i++) {
+    JsonObject variableObject = variablesArray.createNestedObject();
+
+    variableObject["name"] = array[i].name;
+    variableObject["type"] = array[i].type;
+
+    variablesArray.add(variableObject);
+  }
+
+  String jsonResponse;
+  serializeJson(jsonDoc, jsonResponse);
+
+  request->send(200, "application/json", jsonResponse);
+}
+
+#endif
+
 void DIYBMSServer::monitor_nimh_bms(AsyncWebServerRequest *request){
   uint8_t totalModules = _mysettings->totalNumberOfBanks * _mysettings->totalNumberOfSeriesModules;
   const char comma = ',';
@@ -1371,6 +1401,15 @@ void DIYBMSServer::StartServer(AsyncWebServer *webserver,
   _myserver->on("/rules.json", HTTP_GET, DIYBMSServer::GetRules);
   _myserver->on("/storage.json", HTTP_GET, DIYBMSServer::storage);
 
+  #if defined(ByteLinkEnable)
+  //_myserver->on("/avr_variables.json", HTTP_GET, DIYBMSServer::avr_variables);
+  //_myserver->on("/avr_read.json", HTTP_GET, DIYBMSServer::avr_read);
+  //_myserver->on("/avr_log.json", HTTP_GET, DIYBMSServer::avr_log);
+
+  _myserver->on("/esp_variables.json", HTTP_GET, DIYBMSServer::esp_variables);
+  //_myserver->on("/esp_read.json", HTTP_GET, DIYBMSServer::esp_read);
+  //_myserver->on("/esp_log.json", HTTP_GET, DIYBMSServer::esp_log);
+  #endif
 
   //POST method endpoints
   _myserver->on("/savesetting.json", HTTP_POST, DIYBMSServer::saveSetting);
@@ -1388,6 +1427,11 @@ void DIYBMSServer::StartServer(AsyncWebServer *webserver,
 
   _myserver->on("/sdmount.json", HTTP_POST, DIYBMSServer::sdMount);
   _myserver->on("/sdunmount.json", HTTP_POST, DIYBMSServer::sdUnmount);
+
+  #if defined(ByteLinkEnable)
+  //_myserver->on("/esp_write.json", HTTP_POST, DIYBMSServer::esp_write);
+  //_myserver->on("/avr_write.json", HTTP_POST, DIYBMSServer::avr_write);
+  #endif
 
   _myserver->onNotFound(DIYBMSServer::handleNotFound);
   _myserver->begin();

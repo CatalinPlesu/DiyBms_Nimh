@@ -90,6 +90,10 @@ private:
 
     static void saveDisplaySetting(AsyncWebServerRequest *request);
 
+    #if defined(ByteLinkEnable)
+    static void esp_variables(AsyncWebServerRequest *request);
+    #endif
+
     static void sdMount(AsyncWebServerRequest *request);
     static void sdUnmount(AsyncWebServerRequest *request);
 

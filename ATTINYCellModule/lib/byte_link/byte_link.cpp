@@ -80,7 +80,7 @@ void byte_link_read_variable()
             case INT32:
             case UINT32:
             case FLOAT:
-                buffer[1] = *(uint16_t*)&asSharedData[index];
+                buffer[1] = *(uint16_t*)&asSharedData[index].data;
                 buffer[2] = *((uint16_t*)&asSharedData[index].data + 1);
                 break;
 

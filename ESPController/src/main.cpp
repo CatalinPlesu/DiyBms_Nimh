@@ -59,6 +59,10 @@ HAL_ESP8266 hal;
 
 #include "nimh_bms.h"
 
+#if defined (ByteLinkEnable)
+#include "byte_link.h"
+#endif
+
 bool mqtt_connected = false;
 void sendMqttPacket();
 
@@ -1504,6 +1508,10 @@ void Relay_Off_Wrapper(uint8_t pin){
 void setup()
 {
 
+  #if defined(ByteLinkEnable)
+  BYTE_LINK_REGISTER_VARIABLE(mqtt_connected, UINT8);
+  BYTE_LINK_REGISTER_VARIABLE(server_running, UINT8);
+  #endif
   //Debug serial output
 
   //ESP8266 uses dedicated 2nd serial port, but transmit only
