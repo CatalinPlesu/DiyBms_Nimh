@@ -67,7 +67,7 @@ void byte_link_read_variable()
         {
             case INT8:
             case UINT8:
-                buffer[1] = *((uint16_t*)asSharedData[index].data);
+                buffer[1] = *((uint8_t*)asSharedData[index].data);
                 buffer[2] = NULL;
                 break;
 
@@ -107,7 +107,7 @@ void byte_link_write_variable()
         {
             case INT8:
             case UINT8:
-                *((uint16_t*)asSharedData[index].data) = buffer[1];
+                *((uint8_t*)asSharedData[index].data) = (uint8_t)buffer[1];
                 break;
 
             case INT16:

@@ -255,7 +255,13 @@ uint16_t PacketProcessor::CellVoltage()
 bool PacketProcessor::processPacket(PacketStruct *buffer)
 {
   uint8_t moduledata_index = mymoduleaddress % maximum_cell_modules;
+
 #if defined(EXTENDED_COMMANDSET)
+
+  #if defined(DByteLinkEnable)
+    byte_link_init(buffer->moduledata);
+  #endif
+
   switch (buffer->command & 0x7F)
 #else
   switch (buffer->command & 0x0F)
